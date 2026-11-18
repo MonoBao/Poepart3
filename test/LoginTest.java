@@ -70,6 +70,15 @@ public class LoginTest
     }
 
     @Test
+    public void testRegisterUserSuccess()
+    {
+        Login login = new Login();
+        assertEquals("Username successfully captured.\nPassword successfully captured.\nCell phone number successfully added.\nRegistration successful, you can now log in.",
+                login.registerUser("Kyle", "Brooks", "kyl_1", "Ch&&sec@ke99!", "+27838968976"));
+        assertTrue(login.registerStatus("kyl_1", "Ch&&sec@ke99!", "+27838968976"));
+    }
+
+    @Test
     public void testLoginSuccessful()
     {
         Login login = new Login();

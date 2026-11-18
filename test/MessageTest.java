@@ -49,6 +49,8 @@ public class MessageTest
     public void testRecipientSuccess()
     {
         assertEquals("Cell phone number successfully captured.", messages.checkRecipientCell());
+        messages.recipient = "08575975889";
+        assertEquals("Cell phone number successfully captured.", messages.checkRecipientCell());
     }
 
     @Test
@@ -78,6 +80,8 @@ public class MessageTest
         messages.messageID = "12345678901";
         assertFalse(messages.checkMessageID());
         messages.messageID = "123456789";
+        assertTrue(messages.checkMessageID());
+        messages.messageID = "";
         assertFalse(messages.checkMessageID());
         messages.messageID = "abcdefghij";
         assertFalse(messages.checkMessageID());
@@ -160,5 +164,116 @@ public class MessageTest
         assertEquals(1, messages.returnTotalMessages());
         messages.SentMessage("1");
         assertEquals(2, messages.returnTotalMessages());
+    }
+
+    @Test
+    public void testPartThreeArraysUseTheAssignmentData()
+    {
+        addTestMessage(messages, 0, "1111111111", "+27834557896", "Did you get the cake?", "1");
+        addTestMessage(messages, 1, "2222222222", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "3");
+        addTestMessage(messages, 2, "3333333333", "+27834484567", "Yohoooo, I am at your gate.", "2");
+        addTestMessage(messages, 3, "0838884567", "+27834557896", "It is dinner time !", "1");
+        addTestMessage(messages, 4, "5555555555", "+27838884567", "Ok, I am leaving without you.", "3");
+
+        assertArrayEquals(new String[] {"Did you get the cake?", "It is dinner time !"}, messages.sentMessages);
+        assertArrayEquals(new String[] {"Yohoooo, I am at your gate."}, messages.disregardedMessages);
+        assertArrayEquals(new String[] {"Where are you? You are late! I have asked you to be on time.", "Ok, I am leaving without you."}, messages.storedMessages);
+        assertEquals(5, messages.messageIDs.length);
+        assertEquals(5, messages.messageHashes.length);
+    }
+
+    @Test
+    public void testStoredMessagesAreReadFromJson() throws Exception
+    {
+        messages.sender = "Katso Mosime";
+        messages.SentMessage("3");
+
+        Message loaded = new Message();
+        loaded.filename = messages.filename;
+        loaded.loadStoredMessages();
+
+        assertArrayEquals(new String[] {messages.message}, loaded.storedMessages);
+        assertEquals(messages.messageID, loaded.messageIDs[0]);
+        assertEquals(messages.createMessageHash(), loaded.messageHashes[0]);
+        assertTrue(loaded.printStoredSendersAndRecipients().contains("Sender: Katso Mosime"));
+        assertTrue(loaded.printStoredSendersAndRecipients().contains("Recipient: +27718693002"));
+    }
+
+    @Test
+    public void testLongestStoredMessage()
+    {
+        addTestMessage(messages, 1, "2222222222", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "3");
+        addTestMessage(messages, 4, "5555555555", "+27838884567", "Ok, I am leaving without you.", "3");
+
+        assertEquals("Where are you? You are late! I have asked you to be on time.", messages.findLongestStoredMessage());
+    }
+
+    @Test
+    public void testSearchMessageID()
+    {
+        addTestMessage(messages, 3, "0838884567", "+27834557896", "It is dinner time !", "1");
+
+        String result = messages.searchForMessageID("0838884567");
+        assertTrue(result.contains("Recipient: +27834557896"));
+        assertTrue(result.contains("Message: It is dinner time !"));
+        assertEquals("Message ID not found.", messages.searchForMessageID("9999999999"));
+    }
+
+    @Test
+    public void testSearchMessagesByRecipient()
+    {
+        addTestMessage(messages, 1, "2222222222", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "3");
+        addTestMessage(messages, 3, "4444444444", "+27834557896", "It is dinner time !", "1");
+        addTestMessage(messages, 4, "5555555555", "+27838884567", "Ok, I am leaving without you.", "3");
+
+        String result = messages.searchForRecipient("+27838884567");
+        assertTrue(result.contains("Where are you? You are late! I have asked you to be on time."));
+        assertTrue(result.contains("Ok, I am leaving without you."));
+        assertFalse(result.contains("It is dinner time !"));
+    }
+
+    @Test
+    public void testDeleteStoredMessageByHash() throws Exception
+    {
+        addTestMessage(messages, 1, "2222222222", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "3");
+        String hash = messages.messageHashes[0];
+
+        assertEquals("Message: \"Where are you? You are late! I have asked you to be on time.\" successfully deleted.", messages.deleteMessageHash(hash));
+        assertEquals(0, messages.storedMessages.length);
+        assertEquals(0, messages.messageHashes.length);
+        assertEquals("No stored messages.", messages.printStoredMessageReport());
+        try (FileReader reader = new FileReader(messages.filename))
+        {
+            assertEquals(0, JsonParser.parseReader(reader).getAsJsonArray().size());
+        }
+    }
+
+    @Test
+    public void testSentAndStoredReports()
+    {
+        addTestMessage(messages, 0, "1111111111", "+27834557896", "Did you get the cake?", "1");
+        addTestMessage(messages, 1, "2222222222", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "3");
+        addTestMessage(messages, 3, "0838884567", "+27834557896", "It is dinner time !", "1");
+        addTestMessage(messages, 4, "5555555555", "+27838884567", "Ok, I am leaving without you.", "3");
+
+        String sentReport = messages.printMessageReport();
+        String storedReport = messages.printStoredMessageReport();
+        assertTrue(sentReport.contains("Did you get the cake?"));
+        assertTrue(sentReport.contains("It is dinner time !"));
+        assertFalse(sentReport.contains("Where are you?"));
+        assertTrue(storedReport.contains("Where are you?"));
+        assertTrue(storedReport.contains("Ok, I am leaving without you."));
+        assertTrue(storedReport.contains("Message Hash:"));
+        assertTrue(storedReport.contains("Recipient:"));
+    }
+
+    public void addTestMessage(Message target, int number, String id, String recipient, String text, String choice)
+    {
+        target.number = number;
+        target.messageID = id;
+        target.sender = "Katso Mosime";
+        target.recipient = recipient;
+        target.message = text;
+        target.SentMessage(choice);
     }
 }
