@@ -1,8 +1,8 @@
 public class Login extends Registration
 {
-    public boolean LoginUser(String UserName, String Password)
+    public boolean loginUser(String username, String password)
     {
-        if (Username.equals(UserName) && this.Password.equals(Password))
+        if (Username != null && Password != null && Username.equals(username) && Password.equals(password))
         {
             return true;
         }
@@ -16,11 +16,11 @@ public class Login extends Registration
     {
         if (LoginStatus)
         {
-            return "welcome " + FirstName + ", " + LastName + " welcome back again";
+            return "Welcome " + FirstName + ", " + LastName + " it is great to see you.";
         }
         else
         {
-            return "Username or password is wrong please try again";
+            return "Username or password incorrect, please try again.";
         }
     }
 }

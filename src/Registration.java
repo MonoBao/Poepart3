@@ -6,12 +6,12 @@ public class Registration
     String Password;
     String CellPhoneNumber;
 
-    public boolean CheckUserName(String Username)
+    public boolean checkUserName(String Username)
     {
         return Username.contains("_") && Username.length() <= 5;
     }
 
-    public boolean CheckPassWordComplaxity(String Password)
+    public boolean checkPasswordComplexity(String Password)
     {
         return Password.length() >= 8 &&
                 Password.matches(".*[A-Z].*") &&
@@ -20,24 +20,25 @@ public class Registration
                 Password.matches(".*[^a-zA-Z0-9].*");
     }
 
-    public boolean CheckCellPhoneNumber(String CellPhoneNumber)
+    public boolean checkCellPhoneNumber(String CellPhoneNumber)
     {
+        // Regex syntax follows the Java Pattern API: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html
         return CellPhoneNumber.matches("\\+27[0-9]{9}");
     }
 
     public String registerUser(String fname, String lname, String username, String password, String cellphone)
     {
-        if (!CheckUserName(username))
+        if (!checkUserName(username))
         {
-            return "Username is not correctly formatted,please ensure that your username contains an underscore and is no more than five characters in length.";
+            return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
         }
-        else if (!CheckPassWordComplaxity(password))
+        else if (!checkPasswordComplexity(password))
         {
-            return "Password is not correctly formatted,please ensure that the password contains at least eight characters,a capital letter, a number, and a special character.";
+            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
         }
-        else if (!CheckCellPhoneNumber(cellphone))
+        else if (!checkCellPhoneNumber(cellphone))
         {
-            return "Cell phone number is incorrectly formatted or does not contain international code,please correct the number and try again.";
+            return "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.";
         }
         else
         {
@@ -52,8 +53,8 @@ public class Registration
 
     public boolean registerStatus(String username, String password, String cellphone)
     {
-        return CheckUserName(username) &&
-                CheckPassWordComplaxity(password) &&
-                CheckCellPhoneNumber(cellphone);
+        return checkUserName(username) &&
+                checkPasswordComplexity(password) &&
+                checkCellPhoneNumber(cellphone);
     }
 }

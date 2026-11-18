@@ -40,7 +40,7 @@ public class QuickChat
         String username = scan.nextLine();
         System.out.print("Enter password: ");
         String password = scan.nextLine();
-        boolean status = login.LoginUser(username, password);
+        boolean status = login.loginUser(username, password);
         System.out.println(login.returnLoginStatus(status));
         if (status)
         {
@@ -78,7 +78,7 @@ public class QuickChat
         {
             System.out.print("Enter recipient number: ");
             messages.recipient = scan.nextLine();
-            while (!login.CheckCellPhoneNumber(messages.recipient))
+            while (!login.checkCellPhoneNumber(messages.recipient))
             {
                 System.out.println(messages.checkRecipientCell());
                 System.out.print("Enter recipient number: ");

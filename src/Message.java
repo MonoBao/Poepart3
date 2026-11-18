@@ -40,7 +40,7 @@ public class Message
     public String checkRecipientCell()
     {
         Registration registration = new Registration();
-        if (registration.CheckCellPhoneNumber(recipient))
+        if (registration.checkCellPhoneNumber(recipient))
         {
             return "Cell phone number successfully captured";
         }
