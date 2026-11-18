@@ -1,3 +1,4 @@
+// Runs the registration, login, and message menus.
 import java.util.Scanner;
 
 public class QuickChat
@@ -11,6 +12,12 @@ public class QuickChat
 
     public QuickChat()
     {
+        register();
+    }
+
+    public QuickChat(String fileName)
+    {
+        messages.filename = fileName;
         register();
     }
 
@@ -45,6 +52,7 @@ public class QuickChat
         System.out.println(login.returnLoginStatus(status));
         if (status)
         {
+            messages.loadStoredMessages();
             System.out.println("Welcome to QuickChat.");
             System.out.print("How many messages do you want to enter: ");
             number = Integer.parseInt(scan.nextLine());
@@ -60,6 +68,7 @@ public class QuickChat
             System.out.println("1 Send Messages");
             System.out.println("2 Show recently sent messages");
             System.out.println("3 Quit");
+            System.out.println("4 Stored Messages");
             System.out.print("Enter option: ");
             choice = scan.nextLine();
             if (choice.equals("1"))
@@ -69,6 +78,58 @@ public class QuickChat
             else if (choice.equals("2"))
             {
                 System.out.println("Coming Soon.");
+            }
+            else if (choice.equals("4"))
+            {
+                storedMessagesMenu();
+            }
+        }
+    }
+
+    public void storedMessagesMenu()
+    {
+        String choice = "";
+        while (!choice.equals("7"))
+        {
+            System.out.println("1 Display stored message senders and recipients");
+            System.out.println("2 Display the longest stored message");
+            System.out.println("3 Search for a message ID");
+            System.out.println("4 Search messages for a recipient");
+            System.out.println("5 Delete a message using its hash");
+            System.out.println("6 Display message reports");
+            System.out.println("7 Back");
+            System.out.print("Enter option: ");
+            choice = scan.nextLine();
+
+            if (choice.equals("1"))
+            {
+                System.out.println(messages.printStoredSendersAndRecipients());
+            }
+            else if (choice.equals("2"))
+            {
+                System.out.println(messages.findLongestStoredMessage());
+            }
+            else if (choice.equals("3"))
+            {
+                System.out.print("Enter message ID: ");
+                System.out.println(messages.searchForMessageID(scan.nextLine()));
+            }
+            else if (choice.equals("4"))
+            {
+                System.out.print("Enter recipient number: ");
+                System.out.println(messages.searchForRecipient(scan.nextLine()));
+            }
+            else if (choice.equals("5"))
+            {
+                System.out.print("Enter message hash: ");
+                System.out.println(messages.deleteMessageHash(scan.nextLine()));
+            }
+            else if (choice.equals("6"))
+            {
+                System.out.println("Sent Messages");
+                System.out.println(messages.printMessageReport());
+                System.out.println("Stored Messages");
+                System.out.println(messages.printStoredMessageReport());
             }
         }
     }
