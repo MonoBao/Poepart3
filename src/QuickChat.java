@@ -7,6 +7,7 @@ public class QuickChat
     Message messages = new Message();
     int number;
     int entered;
+    boolean totalDisplayed;
 
     public QuickChat()
     {
@@ -44,7 +45,7 @@ public class QuickChat
         System.out.println(login.returnLoginStatus(status));
         if (status)
         {
-            System.out.println("Welcome to QuickChat");
+            System.out.println("Welcome to QuickChat.");
             System.out.print("How many messages do you want to enter: ");
             number = Integer.parseInt(scan.nextLine());
             menu();
@@ -67,24 +68,25 @@ public class QuickChat
             }
             else if (choice.equals("2"))
             {
-                System.out.println("Coming Soon");
+                System.out.println("Coming Soon.");
             }
         }
     }
 
     public void sendMessages()
     {
-        while (entered < number)
+        for (int i = entered; i < number; i++)
         {
             System.out.print("Enter recipient number: ");
             messages.recipient = scan.nextLine();
-            while (!login.checkCellPhoneNumber(messages.recipient))
+            while (!messages.checkRecipientCellNumber())
             {
                 System.out.println(messages.checkRecipientCell());
                 System.out.print("Enter recipient number: ");
                 messages.recipient = scan.nextLine();
             }
             System.out.println(messages.checkRecipientCell());
+            messages.sender = login.FirstName + " " + login.LastName;
             System.out.print("Enter message: ");
             messages.message = scan.nextLine();
             while (!messages.checkMessageLength())
@@ -122,6 +124,10 @@ public class QuickChat
             }
             entered++;
         }
-        System.out.println("Total messages sent: " + messages.returnTotalMessages());
+        if (entered == number && !totalDisplayed)
+        {
+            System.out.println("Total messages sent: " + messages.returnTotalMessages());
+            totalDisplayed = true;
+        }
     }
 }

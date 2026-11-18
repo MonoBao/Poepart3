@@ -32,7 +32,7 @@ public class MessageTest
     {
         messages.message = "a".repeat(250);
         assertTrue(messages.checkMessageLength());
-        assertEquals("Message ready to send", messages.messageStatus());
+        assertEquals("Message ready to send.", messages.messageStatus());
     }
 
     @Test
@@ -40,22 +40,22 @@ public class MessageTest
     {
         messages.message = "a".repeat(251);
         assertFalse(messages.checkMessageLength());
-        assertEquals("Message exceeds 250 characters by 1; please reduce the size", messages.messageStatus());
+        assertEquals("Message exceeds 250 characters by 1; please reduce the size.", messages.messageStatus());
         messages.message = "a".repeat(300);
-        assertEquals("Message exceeds 250 characters by 50; please reduce the size", messages.messageStatus());
+        assertEquals("Message exceeds 250 characters by 50; please reduce the size.", messages.messageStatus());
     }
 
     @Test
     public void testRecipientSuccess()
     {
-        assertEquals("Cell phone number successfully captured", messages.checkRecipientCell());
+        assertEquals("Cell phone number successfully captured.", messages.checkRecipientCell());
     }
 
     @Test
     public void testRecipientFailure()
     {
-        messages.recipient = "0857595889";
-        assertEquals("Cell phone number is incorrectly formatted or does not contain an international code. Please correct the number and try again", messages.checkRecipientCell());
+        messages.recipient = "08966553";
+        assertEquals("Cell phone number is incorrectly formatted or does not contain an international code. Please correct the number and try again.", messages.checkRecipientCell());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class MessageTest
     @Test
     public void testSendMessage()
     {
-        assertEquals("Message successfully sent", messages.SentMessage("1"));
+        assertEquals("Message successfully sent.", messages.SentMessage("1"));
         assertEquals(1, messages.returnTotalMessages());
         assertEquals("Message ID: 0012345678\nMessage Hash: 00:0:HITONIGHT\nRecipient: +27718693002\nMessage: Hi Mike, can you join us for dinner tonight?\n", messages.printMessages());
     }
@@ -109,7 +109,7 @@ public class MessageTest
     @Test
     public void testDisregardMessage()
     {
-        assertEquals("Press 0 to delete the message", messages.SentMessage("2"));
+        assertEquals("Press 0 to delete the message.", messages.SentMessage("2"));
         assertEquals(0, messages.returnTotalMessages());
         assertEquals("", messages.printMessages());
         assertFalse(new File(messages.filename).exists());
@@ -118,7 +118,7 @@ public class MessageTest
     @Test
     public void testStoreMessage() throws Exception
     {
-        assertEquals("Message successfully stored", messages.SentMessage("3"));
+        assertEquals("Message successfully stored.", messages.SentMessage("3"));
         assertEquals(0, messages.returnTotalMessages());
         assertEquals("", messages.printMessages());
         try (FileReader reader = new FileReader(messages.filename))
@@ -135,13 +135,13 @@ public class MessageTest
     @Test
     public void testStorageKeepsEarlierMessages() throws Exception
     {
-        assertEquals("Message successfully stored", messages.storeMessage());
+        assertEquals("Message successfully stored.", messages.storeMessage());
         Message next = new Message();
         next.filename = messages.filename;
         next.createMessageID();
         next.recipient = "+27718693002";
         next.message = "Text with \"quotes\", a slash \\ and a newline\nGoodbye";
-        assertEquals("Message successfully stored", next.storeMessage());
+        assertEquals("Message successfully stored.", next.storeMessage());
         try (FileReader reader = new FileReader(messages.filename))
         {
             JsonArray stored = JsonParser.parseReader(reader).getAsJsonArray();

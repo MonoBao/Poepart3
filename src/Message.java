@@ -14,6 +14,7 @@ public class Message
     String messageID = "";
     String recipient = "";
     String message = "";
+    String sender = "";
     String filename = "messages.json";
     int number = -1;
     int total;
@@ -39,15 +40,20 @@ public class Message
 
     public String checkRecipientCell()
     {
-        Registration registration = new Registration();
-        if (registration.checkCellPhoneNumber(recipient))
+        if (checkRecipientCellNumber())
         {
-            return "Cell phone number successfully captured";
+            return "Cell phone number successfully captured.";
         }
         else
         {
-            return "Cell phone number is incorrectly formatted or does not contain an international code. Please correct the number and try again";
+            return "Cell phone number is incorrectly formatted or does not contain an international code. Please correct the number and try again.";
         }
+    }
+
+    public boolean checkRecipientCellNumber()
+    {
+        Registration registration = new Registration();
+        return registration.checkCellPhoneNumber(recipient) || recipient.matches("0[0-9]{9,10}");
     }
 
     public boolean checkMessageLength()
@@ -59,11 +65,11 @@ public class Message
     {
         if (checkMessageLength())
         {
-            return "Message ready to send";
+            return "Message ready to send.";
         }
         else
         {
-            return "Message exceeds 250 characters by " + (message.length() - 250) + "; please reduce the size";
+            return "Message exceeds 250 characters by " + (message.length() - 250) + "; please reduce the size.";
         }
     }
 
@@ -81,11 +87,11 @@ public class Message
         {
             sent.add(messageDetails());
             total++;
-            return "Message successfully sent";
+            return "Message successfully sent.";
         }
         else if (choice.equals("2"))
         {
-            return "Press 0 to delete the message";
+            return "Press 0 to delete the message.";
         }
         else if (choice.equals("3"))
         {
@@ -141,11 +147,11 @@ public class Message
             {
                 new GsonBuilder().setPrettyPrinting().create().toJson(stored, writer);
             }
-            return "Message successfully stored";
+            return "Message successfully stored.";
         }
         catch (IOException error)
         {
-            return "Message could not be stored";
+            return "Message could not be stored.";
         }
     }
 }
