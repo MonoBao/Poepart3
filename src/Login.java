@@ -1,3 +1,4 @@
+// Checks login details and returns the login message.
 public class Login extends Registration
 {
     public boolean loginUser(String username, String password)

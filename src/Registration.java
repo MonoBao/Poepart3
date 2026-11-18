@@ -1,3 +1,4 @@
+// Stores account details and checks registration information.
 public class Registration
 {
     String FirstName;
@@ -22,7 +23,7 @@ public class Registration
 
     public boolean checkCellPhoneNumber(String CellPhoneNumber)
     {
-        // Regex syntax follows the Java Pattern API: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html
+        // Regex source: Oracle Java Pattern API https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html
         return CellPhoneNumber.matches("\\+27[0-9]{9}");
     }
 
