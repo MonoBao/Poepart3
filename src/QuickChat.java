@@ -1,5 +1,6 @@
-// Runs the registration, login, and message menus.
+import java.awt.GraphicsEnvironment;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class QuickChat
 {
@@ -9,6 +10,8 @@ public class QuickChat
     int number;
     int entered;
     boolean totalDisplayed;
+    boolean cancelled;
+    boolean useDialogs = !GraphicsEnvironment.isHeadless();
 
     public QuickChat()
     {
@@ -21,20 +24,67 @@ public class QuickChat
         register();
     }
 
+    private String getInput(String prompt)
+    {
+        String answer;
+        if (useDialogs)
+        {
+            answer = JOptionPane.showInputDialog(prompt);
+        }
+        else
+        {
+            System.out.print(prompt);
+            answer = scan.nextLine();
+        }
+        if (answer == null)
+        {
+            cancelled = true;
+            return "";
+        }
+        return answer;
+    }
+
+    private void showMessage(String text)
+    {
+        if (useDialogs)
+        {
+            JOptionPane.showMessageDialog(null, text);
+        }
+        else
+        {
+            System.out.println(text);
+        }
+    }
+
     public void register()
     {
-        System.out.println("Register");
-        System.out.print("Enter first name: ");
-        String name = scan.nextLine();
-        System.out.print("Enter last name: ");
-        String surname = scan.nextLine();
-        System.out.print("Enter username: ");
-        String username = scan.nextLine();
-        System.out.print("Enter password: ");
-        String password = scan.nextLine();
-        System.out.print("Enter cellphone: ");
-        String cellphone = scan.nextLine();
-        System.out.println(login.registerUser(name, surname, username, password, cellphone));
+        showMessage("Register");
+        String name = getInput("Enter first name: ");
+        if (cancelled)
+        {
+            return;
+        }
+        String surname = getInput("Enter last name: ");
+        if (cancelled)
+        {
+            return;
+        }
+        String username = getInput("Enter username: ");
+        if (cancelled)
+        {
+            return;
+        }
+        String password = getInput("Enter password: ");
+        if (cancelled)
+        {
+            return;
+        }
+        String cellphone = getInput("Enter cellphone: ");
+        if (cancelled)
+        {
+            return;
+        }
+        showMessage(login.registerUser(name, surname, username, password, cellphone));
         if (login.registerStatus(username, password, cellphone))
         {
             logIn();
@@ -43,19 +93,29 @@ public class QuickChat
 
     public void logIn()
     {
-        System.out.println("Login");
-        System.out.print("Enter username: ");
-        String username = scan.nextLine();
-        System.out.print("Enter password: ");
-        String password = scan.nextLine();
+        showMessage("Login");
+        String username = getInput("Enter username: ");
+        if (cancelled)
+        {
+            return;
+        }
+        String password = getInput("Enter password: ");
+        if (cancelled)
+        {
+            return;
+        }
         boolean status = login.loginUser(username, password);
-        System.out.println(login.returnLoginStatus(status));
+        showMessage(login.returnLoginStatus(status));
         if (status)
         {
             messages.loadStoredMessages();
-            System.out.println("Welcome to QuickChat.");
-            System.out.print("How many messages do you want to enter: ");
-            number = Integer.parseInt(scan.nextLine());
+            showMessage("Welcome to QuickChat.");
+            String messageCount = getInput("How many messages do you want to enter: ");
+            if (cancelled)
+            {
+                return;
+            }
+            number = Integer.parseInt(messageCount);
             menu();
         }
     }
@@ -63,21 +123,20 @@ public class QuickChat
     public void menu()
     {
         String choice = "";
-        while (!choice.equals("3"))
+        while (!choice.equals("3") && !cancelled)
         {
-            System.out.println("1 Send Messages");
-            System.out.println("2 Show recently sent messages");
-            System.out.println("3 Quit");
-            System.out.println("4 Stored Messages");
-            System.out.print("Enter option: ");
-            choice = scan.nextLine();
+            choice = getInput("1 Send Messages\n2 Show recently sent messages\n3 Quit\n4 Stored Messages\nEnter option: ");
+            if (cancelled)
+            {
+                return;
+            }
             if (choice.equals("1"))
             {
                 sendMessages();
             }
             else if (choice.equals("2"))
             {
-                System.out.println("Coming Soon.");
+                showMessage("Coming Soon.");
             }
             else if (choice.equals("4"))
             {
@@ -89,47 +148,53 @@ public class QuickChat
     public void storedMessagesMenu()
     {
         String choice = "";
-        while (!choice.equals("7"))
+        while (!choice.equals("7") && !cancelled)
         {
-            System.out.println("1 Display stored message senders and recipients");
-            System.out.println("2 Display the longest stored message");
-            System.out.println("3 Search for a message ID");
-            System.out.println("4 Search messages for a recipient");
-            System.out.println("5 Delete a message using its hash");
-            System.out.println("6 Display message reports");
-            System.out.println("7 Back");
-            System.out.print("Enter option: ");
-            choice = scan.nextLine();
+            choice = getInput("1 Display stored message senders and recipients\n2 Display the longest stored message\n3 Search for a message ID\n4 Search messages for a recipient\n5 Delete a message using its hash\n6 Display message reports\n7 Back\nEnter option: ");
+            if (cancelled)
+            {
+                return;
+            }
 
             if (choice.equals("1"))
             {
-                System.out.println(messages.printStoredSendersAndRecipients());
+                showMessage(messages.printStoredSendersAndRecipients());
             }
             else if (choice.equals("2"))
             {
-                System.out.println(messages.findLongestStoredMessage());
+                showMessage(messages.findLongestStoredMessage());
             }
             else if (choice.equals("3"))
             {
-                System.out.print("Enter message ID: ");
-                System.out.println(messages.searchForMessageID(scan.nextLine()));
+                String messageID = getInput("Enter message ID: ");
+                if (cancelled)
+                {
+                    return;
+                }
+                showMessage(messages.searchForMessageID(messageID));
             }
             else if (choice.equals("4"))
             {
-                System.out.print("Enter recipient number: ");
-                System.out.println(messages.searchForRecipient(scan.nextLine()));
+                String recipient = getInput("Enter recipient number: ");
+                if (cancelled)
+                {
+                    return;
+                }
+                showMessage(messages.searchForRecipient(recipient));
             }
             else if (choice.equals("5"))
             {
-                System.out.print("Enter message hash: ");
-                System.out.println(messages.deleteMessageHash(scan.nextLine()));
+                String hash = getInput("Enter message hash: ");
+                if (cancelled)
+                {
+                    return;
+                }
+                showMessage(messages.deleteMessageHash(hash));
             }
             else if (choice.equals("6"))
             {
-                System.out.println("Sent Messages");
-                System.out.println(messages.printMessageReport());
-                System.out.println("Stored Messages");
-                System.out.println(messages.printStoredMessageReport());
+                showMessage("Sent Messages\n" + messages.printMessageReport()
+                        + "\nStored Messages\n" + messages.printStoredMessageReport());
             }
         }
     }
@@ -138,56 +203,78 @@ public class QuickChat
     {
         for (int i = entered; i < number; i++)
         {
-            System.out.print("Enter recipient number: ");
-            messages.recipient = scan.nextLine();
+            messages.recipient = getInput("Enter recipient number: ");
+            if (cancelled)
+            {
+                return;
+            }
             while (!messages.checkRecipientCellNumber())
             {
-                System.out.println(messages.checkRecipientCell());
-                System.out.print("Enter recipient number: ");
-                messages.recipient = scan.nextLine();
+                showMessage(messages.checkRecipientCell());
+                messages.recipient = getInput("Enter recipient number: ");
+                if (cancelled)
+                {
+                    return;
+                }
             }
-            System.out.println(messages.checkRecipientCell());
+            showMessage(messages.checkRecipientCell());
             messages.sender = login.FirstName + " " + login.LastName;
-            System.out.print("Enter message: ");
-            messages.message = scan.nextLine();
+            messages.message = getInput("Enter message: ");
+            if (cancelled)
+            {
+                return;
+            }
             while (!messages.checkMessageLength())
             {
-                System.out.println(messages.messageStatus());
-                System.out.print("Enter message: ");
-                messages.message = scan.nextLine();
+                showMessage(messages.messageStatus());
+                messages.message = getInput("Enter message: ");
+                if (cancelled)
+                {
+                    return;
+                }
             }
-            System.out.println(messages.messageStatus());
+            showMessage(messages.messageStatus());
             messages.createMessageID();
-            System.out.println("Message ID generated: " + messages.messageID);
-            System.out.println("1 Send Message");
-            System.out.println("2 Disregard Message");
-            System.out.println("3 Store Message");
-            System.out.print("Enter option: ");
-            String choice = scan.nextLine();
+            showMessage("Message ID generated: " + messages.messageID);
+            String choice = getInput("1 Send Message\n2 Disregard Message\n3 Store Message\nEnter option: ");
+            if (cancelled)
+            {
+                return;
+            }
             while (!choice.equals("1") && !choice.equals("2") && !choice.equals("3"))
             {
-                System.out.print("Enter option: ");
-                choice = scan.nextLine();
+                choice = getInput("Enter option: ");
+                if (cancelled)
+                {
+                    return;
+                }
             }
-            System.out.println(messages.SentMessage(choice));
+            showMessage(messages.SentMessage(choice));
             if (choice.equals("1"))
             {
-                System.out.println(messages.messageDetails());
+                showMessage(messages.messageDetails());
             }
             else if (choice.equals("2"))
             {
-                String delete = scan.nextLine();
+                String delete = getInput("Press 0 to delete the message: ");
+                if (cancelled)
+                {
+                    return;
+                }
                 while (!delete.equals("0"))
                 {
-                    System.out.print("Press 0 to delete the message: ");
-                    delete = scan.nextLine();
+                    delete = getInput("Press 0 to delete the message: ");
+                    if (cancelled)
+                    {
+                        return;
+                    }
                 }
             }
             entered++;
         }
         if (entered == number && !totalDisplayed)
         {
-            System.out.println("Total messages sent: " + messages.returnTotalMessages());
+            showMessage("Total messages sent: " + messages.returnTotalMessages());
             totalDisplayed = true;
         }
     }
